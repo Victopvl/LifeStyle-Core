@@ -120,27 +120,31 @@ with st.sidebar:
 tab_dash, tab_ingreso, tab_explorar = st.tabs(["👁️ Dashboard Unificado", "📝 Nueva Tarea", "🔍 Explorador Obsidian"])
 
 # ------------------------------------------
-# TAB 1: 4 CUADRANTES (DEMO VISUAL EN TARJETAS)
+# TAB 1: 4 CUADRANTES SIMÉTRICOS (2x2 Grid)
 # ------------------------------------------
 with tab_dash:
     st.markdown("### Orquestación de Flujos de Trabajo (SSOT)")
+    
+    # Inyectamos un estilo CSS ligero para asegurar altura simétrica en las tarjetas
+    st.markdown("""
+        <style>
+        [data-testid="stVerticalBlock"] > [data-testid="stContainer"] {
+            height: 240px;
+            overflow-y: auto;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Fila 1
     col1, col2 = st.columns(2)
     
     with col1:
-        # Cuadrante 1: Calendar
         with st.container(border=True):
             st.subheader("📅 Google Calendar (Staging)")
-            st.info("**14:00** - Reunión de Arquitectura Cloud (meet.google.com/xyz)")
+            st.info("**14:00** - Reunión de Arquitectura Cloud")
             st.info("**16:30** - Code Review Portafolio")
-        
-        # Cuadrante 2: Gmail
-        with st.container(border=True):
-            st.subheader("📧 Gmail Inbox (Unread)")
-            st.warning("🔴 **Urgente:** Alerta de facturación AWS - *aws@amazon.com*")
-            st.success("🟢 **Suscripción:** Acceso a GitHub Copilot - *github@github.com*")
-
+            
     with col2:
-        # Cuadrante 3: Obsidian
         with st.container(border=True):
             st.subheader("📝 Bóveda Obsidian (Últimas Notas)")
             tareas_recientes = obtener_tareas_recientes()
@@ -148,15 +152,24 @@ with tab_dash:
                 for t in tareas_recientes[:3]:
                     st.write(f"- 📂 **{t['Dominio']}**: {t['Tarea']} *(Estado: {t['Estado']})*")
             else:
-                st.write("No hay notas recientes.")
-                
-        # Cuadrante 4: System Status
+                st.write("No hay notas recientes en la bóveda.")
+
+    # Fila 2
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        with st.container(border=True):
+            st.subheader("📧 Gmail Inbox (Unread)")
+            st.warning("🔴 **Urgente:** Alerta de facturación AWS")
+            st.success("🟢 **Suscripción:** GitHub Copilot activo")
+            
+    with col4:
         with st.container(border=True):
             st.subheader("⚙️ System Status")
-            c1, c2, c3 = st.columns(3)
-            c1.metric(label="APIs Activas", value="3/3", delta="Online")
-            c2.metric(label="Costo Operativo", value="$0.00", delta="Óptimo", delta_color="inverse")
-            c3.metric(label="Staging Queue", value="0", delta="Sincronizado")
+            sc1, sc2, sc3 = st.columns(3)
+            sc1.metric(label="APIs", value="3/3", delta="Online")
+            sc2.metric(label="Costo", value="$0.00", delta="Óptimo")
+            sc3.metric(label="Queue", value="0", delta="Sync")
 
 # ------------------------------------------
 # TAB 2: INGRESO DE TAREAS (Tu código original)
