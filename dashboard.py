@@ -120,35 +120,43 @@ with st.sidebar:
 tab_dash, tab_ingreso, tab_explorar = st.tabs(["👁️ Dashboard Unificado", "📝 Nueva Tarea", "🔍 Explorador Obsidian"])
 
 # ------------------------------------------
-# TAB 1: 4 CUADRANTES (DEMO VISUAL)
+# TAB 1: 4 CUADRANTES (DEMO VISUAL EN TARJETAS)
 # ------------------------------------------
 with tab_dash:
     st.markdown("### Orquestación de Flujos de Trabajo (SSOT)")
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📅 Google Calendar (Staging)")
-        st.info("**14:00** - Reunión de Arquitectura Cloud (meet.google.com/xyz)")
-        st.info("**16:30** - Code Review Portafolio")
+        # Cuadrante 1: Calendar
+        with st.container(border=True):
+            st.subheader("📅 Google Calendar (Staging)")
+            st.info("**14:00** - Reunión de Arquitectura Cloud (meet.google.com/xyz)")
+            st.info("**16:30** - Code Review Portafolio")
         
-        st.subheader("📧 Gmail Inbox (Unread)")
-        st.warning("🔴 **Urgente:** Alerta de facturación AWS - *aws@amazon.com*")
-        st.success("🟢 **Suscripción:** Acceso a GitHub Copilot - *github@github.com*")
+        # Cuadrante 2: Gmail
+        with st.container(border=True):
+            st.subheader("📧 Gmail Inbox (Unread)")
+            st.warning("🔴 **Urgente:** Alerta de facturación AWS - *aws@amazon.com*")
+            st.success("🟢 **Suscripción:** Acceso a GitHub Copilot - *github@github.com*")
 
     with col2:
-        st.subheader("📝 Bóveda Obsidian (Últimas Notas)")
-        tareas_recientes = obtener_tareas_recientes()
-        if tareas_recientes:
-            for t in tareas_recientes[:3]: # Muestra un máximo de 3
-                st.write(f"- 📂 **{t['Dominio']}**: {t['Tarea']} *(Estado: {t['Estado']})*")
-        else:
-            st.write("No hay notas recientes.")
-            
-        st.subheader("⚙️ System Status")
-        c1, c2, c3 = st.columns(3)
-        c1.metric(label="APIs Activas", value="3/3", delta="Online")
-        c2.metric(label="Costo Operativo", value="$0.00", delta="Optimo", delta_color="inverse")
-        c3.metric(label="Staging Queue", value="0", delta="Sincronizado")
+        # Cuadrante 3: Obsidian
+        with st.container(border=True):
+            st.subheader("📝 Bóveda Obsidian (Últimas Notas)")
+            tareas_recientes = obtener_tareas_recientes()
+            if tareas_recientes:
+                for t in tareas_recientes[:3]:
+                    st.write(f"- 📂 **{t['Dominio']}**: {t['Tarea']} *(Estado: {t['Estado']})*")
+            else:
+                st.write("No hay notas recientes.")
+                
+        # Cuadrante 4: System Status
+        with st.container(border=True):
+            st.subheader("⚙️ System Status")
+            c1, c2, c3 = st.columns(3)
+            c1.metric(label="APIs Activas", value="3/3", delta="Online")
+            c2.metric(label="Costo Operativo", value="$0.00", delta="Óptimo", delta_color="inverse")
+            c3.metric(label="Staging Queue", value="0", delta="Sincronizado")
 
 # ------------------------------------------
 # TAB 2: INGRESO DE TAREAS (Tu código original)
