@@ -1,1 +1,10 @@
 httpx\nrequests\nbeautifulsoup4\njinja2\npython-dateutil\npyyaml
+
+fastapi
+uvicorn
+httpx
+requests
+beautifulsoup4
+jinja2
+python-dateutil
+pyyaml
