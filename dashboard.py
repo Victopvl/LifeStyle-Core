@@ -6,8 +6,10 @@ import pandas as pd
 import streamlit as st
 
 # ==========================================
-# CONFIGURACIÓN (V0.5 - GUI + FILTROS)
+# CONFIGURACIÓN (V0.5 - GUI + FILTROS + DASHBOARD)
 # ==========================================
+st.set_page_config(page_title="LifeStyle-Core | V0.5", page_icon="🚀", layout="wide")
+
 # 1. Detección inteligente de entorno (Local vs Nube)
 RUTA_LOCAL_WINDOWS = r"G:\Mi unidad\OBSIDIAN"
 
@@ -74,7 +76,24 @@ def guardar_dominios(dominios):
 if "carpetas" not in st.session_state:
     st.session_state.carpetas = cargar_dominios()
 
-st.set_page_config(page_title="LifeStyle-Core | V0.5", page_icon="🚀", layout="wide")
+# Función auxiliar para leer rápidamente notas recientes para el dashboard
+def obtener_tareas_recientes():
+    tareas = []
+    for dom, carpeta in st.session_state.carpetas.items():
+        ruta = os.path.join(RUTA_OBSIDIAN, carpeta)
+        if os.path.exists(ruta):
+            for arch in os.listdir(ruta):
+                if arch.endswith(".md"):
+                    try:
+                        with open(os.path.join(ruta, arch), "r", encoding="utf-8") as f:
+                            cont = f.read()
+                        estado_match = re.search(r"estado:\s*(.+)", cont)
+                        estado = estado_match.group(1).strip() if estado_match else "pendiente"
+                        tareas.append({"Tarea": arch.replace(".md", ""), "Dominio": dom, "Estado": estado})
+                    except Exception:
+                        pass
+    return tareas
+
 st.title("🚀 LifeStyle-Core - Orquestador Inteligente")
 
 # ==========================================
@@ -96,12 +115,43 @@ with st.sidebar:
             st.rerun()
 
 # ==========================================
-# PESTAÑAS PRINCIPALES
+# PESTAÑAS PRINCIPALES (Ahora son 3)
 # ==========================================
-tab_ingreso, tab_dashboard = st.tabs(["📝 Nueva Tarea", "📊 Dashboard de Tareas"])
+tab_dash, tab_ingreso, tab_explorar = st.tabs(["👁️ Dashboard Unificado", "📝 Nueva Tarea", "🔍 Explorador Obsidian"])
 
 # ------------------------------------------
-# TAB 1: INGRESO DE TAREAS
+# TAB 1: 4 CUADRANTES (DEMO VISUAL)
+# ------------------------------------------
+with tab_dash:
+    st.markdown("### Orquestación de Flujos de Trabajo (SSOT)")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📅 Google Calendar (Staging)")
+        st.info("**14:00** - Reunión de Arquitectura Cloud (meet.google.com/xyz)")
+        st.info("**16:30** - Code Review Portafolio")
+        
+        st.subheader("📧 Gmail Inbox (Unread)")
+        st.warning("🔴 **Urgente:** Alerta de facturación AWS - *aws@amazon.com*")
+        st.success("🟢 **Suscripción:** Acceso a GitHub Copilot - *github@github.com*")
+
+    with col2:
+        st.subheader("📝 Bóveda Obsidian (Últimas Notas)")
+        tareas_recientes = obtener_tareas_recientes()
+        if tareas_recientes:
+            for t in tareas_recientes[:3]: # Muestra un máximo de 3
+                st.write(f"- 📂 **{t['Dominio']}**: {t['Tarea']} *(Estado: {t['Estado']})*")
+        else:
+            st.write("No hay notas recientes.")
+            
+        st.subheader("⚙️ System Status")
+        c1, c2, c3 = st.columns(3)
+        c1.metric(label="APIs Activas", value="3/3", delta="Online")
+        c2.metric(label="Costo Operativo", value="$0.00", delta="Optimo", delta_color="inverse")
+        c3.metric(label="Staging Queue", value="0", delta="Sincronizado")
+
+# ------------------------------------------
+# TAB 2: INGRESO DE TAREAS (Tu código original)
 # ------------------------------------------
 with tab_ingreso:
     with st.form("form_tarea"):
@@ -148,9 +198,9 @@ dominio: {dominio_seleccionado}
                 st.error(f"❌ Error al guardar: {e}")
 
 # ------------------------------------------
-# TAB 2: DASHBOARD DE LECTURA CON FILTROS
+# TAB 3: DASHBOARD DE LECTURA CON FILTROS (Tu código original)
 # ------------------------------------------
-with tab_dashboard:
+with tab_explorar:
     col_titulo, col_btn = st.columns([0.8, 0.2])
     with col_titulo:
         st.subheader("📋 Resumen de Notas en Obsidian")
