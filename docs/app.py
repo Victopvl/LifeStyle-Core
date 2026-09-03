@@ -8,50 +8,11 @@ import streamlit as st
 # ==========================================
 # CONFIGURACIÓN (V0.5 - GUI + FILTROS)
 # ==========================================
-# 1. Detección inteligente de entorno (Local vs Nube)
-RUTA_LOCAL_WINDOWS = r"G:\Mi unidad\OBSIDIAN"
 
-if os.path.exists(r"G:\Mi unidad"):
-    # Si detecta tu disco duro físico, usa tus datos reales
-    RUTA_OBSIDIAN = RUTA_LOCAL_WINDOWS
-else:
-    # Si está en Streamlit Cloud (Linux), usa una carpeta temporal aislada
-    RUTA_OBSIDIAN = "./vault_demo"
+# Usar variable de entorno con un fallback a una carpeta local de prueba
+RUTA_OBSIDIAN = os.getenv("OBSIDIAN_VAULT_PATH", "./vault_demo")
 
-os.makedirs(RUTA_OBSIDIAN, exist_ok=True)
 ARCHIVO_MEMORIA = "dominios.json"
-
-# 2. Generador de datos ficticios (Solo se ejecuta en la nube)
-def inyectar_datos_demo():
-    carpeta_demo = os.path.join(RUTA_OBSIDIAN, "01_Ingeniería_e_IA")
-    os.makedirs(carpeta_demo, exist_ok=True)
-    archivo_prueba = os.path.join(carpeta_demo, "demo_arquitectura.md")
-    
-    if not os.path.exists(archivo_prueba):
-        contenido_demo = """---
-fecha_creacion: 2024-10-25 10:00
-fecha_limite: 2024-12-31
-estado: pendiente
-dominio: Ingeniería e IA
----
-
-# Diseñar arquitectura cloud para el portafolio
-
-## 🎯 Acciones / Contexto
-- [x] Configurar repositorio en GitHub
-- [x] Sanitizar credenciales y `.env`
-- [ ] Desplegar en Streamlit Community Cloud
-
----
-*Nota generada automáticamente para el Demo Público*
-"""
-        with open(archivo_prueba, "w", encoding="utf-8") as f:
-            f.write(contenido_demo)
-
-# Si estamos en modo demo, inyectamos la nota de prueba
-if RUTA_OBSIDIAN == "./vault_demo":
-    inyectar_datos_demo()
-
 
 def cargar_dominios():
     if os.path.exists(ARCHIVO_MEMORIA):

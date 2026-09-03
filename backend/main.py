@@ -44,7 +44,8 @@ class TareaCreate(BaseModel):
     contenido: str = ""
     dominio: str
 
-RUTA_OBSIDIAN = r"G:\Mi unidad\DriveSyncFiles\OBSIDIAN_VICTO"
+# Usar variable de entorno con un fallback a una carpeta local de prueba
+RUTA_OBSIDIAN = os.getenv("OBSIDIAN_VAULT_PATH", "./vault_demo")
 
 @app.get("/")
 def leer_raiz():
